@@ -46,12 +46,54 @@ gridButton.addEventListener("click", ()=>{
     let count = 0;
     for (let i=0; i < gridHeight.value; i++){
         count +=2;
-        let div = document.createElement("div");
+        let div = document.createEvent("div");
         div.classList.add("gridRow");
 
         for(let j=0; j < gridWidth; j++){
             count+=2;
             let col = document.createEvent("div");
-            col.classList.add("gridRow");
+            col.classList.add("gridCol");
+            col.setAttribute("id", `gridCol${count}`);
+            col.addEventListener(events[deviceType].down, ()=>{
+                draw = true;
+                if(erase){
+                    col.style.backgroundColor = "transparent";
+                }else{
+                    col.style.backgroundColor = colorButton.value;
+                }
+            });
+
+
+            col.addEventListener(events[deviceType].move, (e) =>{
+                let elementId = document.elementFromPoint(
+                    !isTouchDevice() ? e.clientX : e.touches[0].clientX,
+                    !isTouchDevice() ? e.clientY : e.touches[0].clientY,
+                    ), id;
+                    chechker(elementId);
+            });
+
+            col.addEventListener(events[deviceType].up, () => {
+                draw = false;
+            });
+
+            div.appendChild(col);
+
+        }
+
+        container.appendChild(div);
+
+    }   
+});
+
+function checker(elementId){
+    let gridColumns = document.querySelectorAll(".gridCol");
+    gridColumns.forEach((element)=>{
+        if(elementId == element.id){
+            if(draw && !erase){
+                element.style.backgroundColor = colorButton.value;
+            }else if (draw && !erase){
+                element.style.backgroundColor = "transparent";
+            }
         }
 })
+}
